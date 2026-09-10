@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Md Faiz Ahmad — Red Teamer · AD & Cloud Security</title>
+<meta name="description" content="Cybersecurity graduate specializing in Active Directory and Cloud Red Teaming. Top 1% TryHackMe. Building offensive security labs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --bg-2: #0f141c;
+    --card: #131a26;
+    --border: #1f2a3a;
+    --text: #e6edf3;
+    --muted: #8b98a9;
+    --accent: #00ff9d;
+    --accent-2: #00c2ff;
+    --danger: #ff4d6d;
+    --warn: #ffb020;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --shadow: 0 20px 70px rgba(0,255,157,0.08);
+    --grid-line: rgba(0,255,157,0.035);
+    --nav-bg: rgba(10,14,20,0.88);
+    --terminal-bar: #0d131d;
+  }
+  [data-theme="light"] {
+    --bg: #f7f9fc;
+    --bg-2: #eef2f7;
+    --card: #ffffff;
+    --border: #d8e0eb;
+    --text: #0f1720;
+    --muted: #5a6b7d;
+    --accent: #00a86b;
+    --accent-2: #0077cc;
+    --danger: #d92e4f;
+    --warn: #c47b00;
+    --shadow: 0 20px 70px rgba(0,168,107,0.12);
+    --grid-line: rgba(0,168,107,0.08);
+    --nav-bg: rgba(247,249,252,0.9);
+    --terminal-bar: #e3e9f1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.65;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events: none;
+    z-index: 0;
+    transition: background-image 0.3s;
+  }
+  .container { max-width: 1150px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: var(--nav-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  nav .container { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; }
+  .logo { font-family: var(--mono); color: var(--accent); font-weight: 700; font-size: 1rem; }
+  .logo::before { content: '$ '; color: var(--muted); }
+  .logo::after { content: '_'; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .nav-right { display: flex; align-items: center; gap: 24px; }
+  .nav-links { display: flex; gap: 22px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.86rem; transition: color 0.2s; font-family: var(--mono); }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a::before { content: './'; color: var(--border); }
+
+  .theme-toggle {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.2s, transform 0.2s;
+    font-size: 1rem;
+  }
+  .theme-toggle:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+  /* HERO */
+  header { min-height: 100vh; display: flex; align-items: center; padding: 110px 0 60px; }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 55px; align-items: center; }
+  .hero-text h1 { font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 22px; letter-spacing: -0.02em; }
+  .hero-text h1 .grad {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-text .role {
+    font-family: var(--mono); color: var(--accent); font-size: 0.95rem;
+    margin-bottom: 18px; letter-spacing: 0.5px;
+  }
+  .hero-text .role::before { content: '> '; color: var(--muted); }
+  .hero-text p.lead { color: var(--muted); font-size: 1.02rem; margin-bottom: 26px; max-width: 520px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+  .badge {
+    font-family: var(--mono); font-size: 0.72rem;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+  .badge.ad { border-color: rgba(255,77,109,0.45); color: var(--danger); }
+  .badge.cloud { border-color: rgba(0,194,255,0.45); color: var(--accent-2); }
+  .badge.top { border-color: rgba(0,255,157,0.45); color: var(--accent); }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 26px;
+    background: var(--accent);
+    color: #0a0e14;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-right: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border: none;
+    font-family: var(--sans);
+  }
+  [data-theme="light"] .btn { color: #ffffff; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,255,157,0.3); }
+  .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn.ghost:hover { border-color: var(--accent); color: var(--accent); box-shadow: none; }
+
+  /* TERMINAL */
+  .terminal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    overflow: hidden;
+    box-shadow: var(--shadow), 0 0 0 1px rgba(0,255,157,0.05);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .terminal-bar {
+    background: var(--terminal-bar);
+    padding: 10px 14px;
+    display: flex; gap: 8px; align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+  .terminal-title { margin-left: 10px; color: var(--muted); font-size: 0.75rem; }
+  .terminal-body { padding: 20px; }
+  .terminal-body .line { margin-bottom: 9px; white-space: pre-wrap; }
+  .prompt { color: var(--accent); }
+  .cmd { color: var(--text); }
+  .out { color: var(--muted); }
+  .out.hi { color: var(--accent-2); }
+  .out.alert { color: var(--danger); }
+  .cursor { display: inline-block; width: 8px; height: 15px; background: var(--accent); animation: blink 1s infinite; vertical-align: middle; }
+
+  /* SECTIONS */
+  section { padding: 95px 0; position: relative; }
+  section.alt { background: var(--bg-2); transition: background 0.3s; }
+  .section-title {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    margin-bottom: 45px;
+    color: var(--text);
+  }
+  .section-title::before { content: '// '; color: var(--accent); }
+  .section-title::after { content: ''; display: block; width: 40px; height: 2px; background: var(--accent); margin-top: 12px; }
+
+  /* REVEAL ANIMATION */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ABOUT */
+  .about-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 40px; }
+  .about-text p { color: var(--muted); margin-bottom: 16px; font-size: 1rem; }
+  .about-text strong { color: var(--text); }
+  .about-text .hl { color: var(--accent); }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--accent); }
+  .stat-card .num { font-family: var(--mono); font-size: 1.8rem; color: var(--accent); font-weight: 700; }
+  .stat-card .lbl { color: var(--muted); font-size: 0.82rem; font-family: var(--mono); }
+
+  /* SKILLS */
+  .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 26px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .skill-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .skill-card h3 { font-size: 1.05rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; color: var(--text); }
+  .skill-card h3 .icon { color: var(--accent); font-family: var(--mono); font-size: 0.85rem; }
+  .skill-card ul { list-style: none; }
+  .skill-card li { color: var(--muted); font-size: 0.88rem; padding: 5px 0 5px 18px; position: relative; }
+  .skill-card li::before { content: '▸'; color: var(--accent); position: absolute; left: 0; }
+  .skill-card li b { color: var(--text); font-weight: 500; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 30px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+    width: 2px; background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    opacity: 0.4;
+  }
+  .timeline-item { position: relative; padding-bottom: 40px; }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -36px; top: 8px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--accent);
+    box-shadow: 0 0 12px rgba(0,255,157,0.6);
+  }
+  .timeline-item .role { font-size: 1.1rem; font-weight: 600; color: var(--text); }
+  .timeline-item .company { font-family: var(--mono); color: var(--accent-2); font-size: 0.88rem; margin: 2px 0 4px; }
+  .timeline-item .date { font-family: var(--mono); color: var(--muted); font-size: 0.78rem; margin-bottom: 14px; letter-spacing: 0.3px; }
+  .timeline-item ul { list-style: none; }
+  .timeline-item li { color: var(--muted); font-size: 0.9rem; padding: 5px 0 5px 20px; position: relative; }
+  .timeline-item li::before { content: '→'; color: var(--accent); position: absolute; left: 0; }
+
+  /* PROJECTS */
+  .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .project {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 26px;
+    transition: transform 0.3s, border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project:hover { transform: translateY(-4px); border-color: var(--accent-2); }
+  .project.featured { grid-column: 1 / -1; border-color: rgba(255,77,109,0.3); }
+  .project.featured::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--danger), var(--warn));
+  }
+  .project-tag { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 1.2px; text-transform: uppercase; }
+  .project-tag.red { color: var(--danger); }
+  .project-tag.cloud { color: var(--accent-2); }
+  .project-tag.wip { color: var(--warn); }
+  .project h3 { margin: 10px 0 12px; font-size: 1.15rem; color: var(--text); }
+  .project p { color: var(--muted); font-size: 0.88rem; margin-bottom: 16px; }
+  .project .stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .project .stack span {
+    font-family: var(--mono); font-size: 0.68rem;
+    padding: 3px 9px; border-radius: 4px;
+    background: rgba(0,194,255,0.08);
+    color: var(--accent-2);
+    border: 1px solid rgba(0,194,255,0.15);
+  }
+  .project .attack-chain { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; font-family: var(--mono); font-size: 0.72rem; }
+  .project .attack-chain span {
+    padding: 4px 10px; border-radius: 4px;
+    background: rgba(255,77,109,0.08);
+    color: var(--danger);
+    border: 1px solid rgba(255,77,109,0.2);
+  }
+  .project .link {
+    display: inline-block; margin-top: 14px;
+    font-family: var(--mono); font-size: 0.78rem;
+    color: var(--accent); text-decoration: none;
+    border-bottom: 1px dashed var(--accent);
+    padding-bottom: 1px;
+  }
+  .project .link:hover { color: var(--accent-2); border-color: var(--accent-2); }
+
+  /* WRITEUPS */
+  .writeups-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .writeup {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    transition: transform 0.3s, border-color 0.3s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .writeup:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .writeup .tag { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
+  .writeup .tag.red { color: var(--danger); }
+  .writeup .tag.cloud { color: var(--accent-2); }
+  .writeup h4 { margin: 10px 0 10px; font-size: 1rem; color: var(--text); }
+  .writeup p { color: var(--muted); font-size: 0.82rem; }
+  .writeup .meta { margin-top: 14px; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+
+  /* CERTIFICATIONS */
+  .certs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .cert {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 12px;
+    transition: border-color 0.2s;
+  }
+  .cert:hover { border-color: var(--accent); }
+  .cert .check { color: var(--accent); font-family: var(--mono); font-size: 1rem; }
+  .cert .name { font-size: 0.85rem; color: var(--text); }
+  .cert .issuer { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
+
+  /* ACHIEVEMENTS */
+  .ach-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .ach {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .ach:hover { transform: translateY(-4px); border-color: var(--warn); }
+  .ach .big { font-family: var(--mono); font-size: 1.6rem; color: var(--warn); font-weight: 700; margin-bottom: 6px; }
+  .ach h4 { font-size: 0.95rem; margin-bottom: 8px; color: var(--text); }
+  .ach p { color: var(--muted); font-size: 0.82rem; }
+  .ach a { color: var(--accent-2); text-decoration: none; font-family: var(--mono); font-size: 0.78rem; }
+  .ach a:hover { text-decoration: underline; }
+
+  /* YOUTUBE */
+  .yt-banner {
+    background: linear-gradient(135deg, rgba(255,0,0,0.08), rgba(0,255,157,0.04));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 30px;
+    align-items: center;
+  }
+  .yt-banner h3 { font-size: 1.5rem; margin-bottom: 10px; }
+  .yt-banner h3 .red { color: #ff0000; }
+  .yt-banner p { color: var(--muted); font-size: 0.95rem; margin-bottom: 6px; }
+  .yt-stats { display: flex; gap: 24px; margin-top: 16px; font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+  .yt-stats b { color: var(--text); display: block; font-size: 1.1rem; font-family: var(--sans); }
+
+  /* CONTACT */
+  .contact-box {
+    text-align: center;
+    padding: 60px 30px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background: radial-gradient(ellipse at center, rgba(0,255,157,0.04), transparent 70%);
+  }
+  .contact-box h2 { font-size: 1.9rem; margin-bottom: 14px; }
+  .contact-box h2 .grad {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .contact-box p { color: var(--muted); margin-bottom: 30px; }
+  .contact-links { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .contact-info {
+    margin-top: 24px; font-family: var(--mono); font-size: 0.82rem; color: var(--muted);
+    display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+  }
+  .contact-info a { color: var(--accent-2); text-decoration: none; }
+  .contact-info a:hover { text-decoration: underline; }
+
+  footer {
+    text-align: center; padding: 40px 0;
+    color: var(--muted); font-family: var(--mono); font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+  }
+  footer .green { color: var(--accent); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-text h1 { font-size: 2.2rem; }
+    .about-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .certs-grid { grid-template-columns: 1fr 1fr; }
+    .ach-grid { grid-template-columns: 1fr; }
+    .writeups-grid { grid-template-columns: 1fr; }
+    .yt-banner { grid-template-columns: 1fr; text-align: center; }
+    .yt-stats { justify-content: center; }
+    .nav-links { display: none; }
+    section { padding: 65px 0; }
+  }
+  @media (max-width: 520px) {
+    .certs-grid { grid-template-columns: 1fr; }
+    .hero-text h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="logo">faiz@redteam</div>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#about">about</a></li>
+        <li><a href="#skills">skills</a></li>
+        <li><a href="#projects">projects</a></li>
+        <li><a href="#writeups">writeups</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header>
+  <div class="container hero-grid">
+    <div class="hero-text reveal">
+      <div class="role">Security Intern · AD & Cloud Red Teaming</div>
+      <h1>I break into <span class="grad">Active Directory</span> and <span class="grad">Azure</span> — so defenders can stop the real attackers.</h1>
+      <p class="lead">
+        Cybersecurity graduate focused on adversary simulation. I build enterprise-grade
+        attack labs, document full kill chains, and map privilege-escalation paths
+        the way real red teams do.
+      </p>
+      <div class="badges">
+        <span class="badge ad">Active Directory Attacks</span>
+        <span class="badge cloud">Azure / Entra ID</span>
+        <span class="badge top">Top 1% TryHackMe</span>
+        <span class="badge">VAPT</span>
+        <span class="badge">NIST 800-171</span>
+      </div>
+      <a href="#projects" class="btn">View Red Team Labs</a>
+      <a href="Md_Faiz_Ahmad_Red_teaming_Resume.pdf" class="btn ghost" download>⬇ Download Resume</a>
+    </div>
+
+    <div class="terminal reveal">
+      <div class="terminal-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="terminal-title">faiz@kali: ~/redteam</span>
+      </div>
+      <div class="terminal-body">
+        <div class="line"><span class="prompt">┌──(faiz㉿kali)-[~]</span></div>
+        <div class="line"><span class="prompt">└─$</span> <span class="cmd">whoami</span></div>
+        <div class="line out">md_faiz_ahmad :: red_teamer</div>
+        <div class="line"><span class="prompt">┌──(faiz㉿kali)-[~]</span></div>
+        <div class="line"><span class="prompt">└─$</span> <span class="cmd">cat focus.txt</span></div>
+        <div class="line out hi">[+] Active Directory Attack Chains</div>
+        <div class="line out hi">[+] Azure / Entra ID Misconfigurations</div>
+        <div class="line out hi">[+] Attack Path Mapping (BloodHound)</div>
+        <div class="line"><span class="prompt">┌──(faiz㉿kali)-[~]</span></div>
+        <div class="line"><span class="prompt">└─$</span> <span class="cmd">./run_lab.sh --bloodhound</span></div>
+        <div class="line out">[*] Mapping privilege escalation paths...</div>
+        <div class="line out alert">[!] Domain Admin path found</div>
+        <div class="line"><span class="prompt">└─$</span> <span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <h2 class="section-title reveal">about_me</h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>
+          I'm a cybersecurity graduate specializing in <strong>Active Directory</strong> and
+          <strong>cloud red teaming</strong>. I built and documented a full AD attack lab
+          covering <span class="hl">Kerberoasting</span>, <span class="hl">LLMNR poisoning</span>,
+          <span class="hl">Pass-the-Hash</span>, and <span class="hl">Golden Ticket</span> attack
+          chains with BloodHound-based path mapping.
+        </p>
+        <p>
+          I'm currently extending that work into <strong>Azure / Entra ID</strong> misconfiguration
+          and privilege-escalation research — documenting each attack chain with matching
+          detection and mitigation guidance.
+        </p>
+        <p>
+          Beyond labs, I've done hands-on VAPT across <strong>10+ web applications</strong> and
+          performed <strong>NIST 800-171 compliance gap analysis</strong> for client organizations.
+          I'm seeking a Security Intern role focused on AD and Cloud Red Teaming, where I can
+          contribute to real-world adversary simulation.
+        </p>
+      </div>
+      <div class="reveal">
+        <div class="stat-card">
+          <div class="num">Top 1%</div>
+          <div class="lbl">TryHackMe Global Ranking</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">10+</div>
+          <div class="lbl">Web Apps Tested (VAPT)</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">9</div>
+          <div class="lbl">Vulns Found · 5 Critical</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">5+</div>
+          <div class="lbl">Full Pentest Engagements</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="alt">
+  <div class="container">
+    <h2 class="section-title reveal">skills</h2>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <h3><span class="icon">[01]</span> Offensive Security</h3>
+        <ul>
+          <li><b>VAPT</b> — Web app & network</li>
+          <li><b>Web Security</b> — SQLi, XSS</li>
+          <li><b>AD Attacks</b> — Kerberoasting, LLMNR Poisoning</li>
+          <li><b>Post-Exploitation</b> — Pass-the-Hash, Golden Ticket</li>
+          <li><b>Attack Path Mapping</b> — BloodHound</li>
+        </ul>
+      </div>
+      <div class="skill-card reveal">
+        <h3><span class="icon">[02]</span> Security Tools</h3>
+        <ul>
+          <li><b>Burp Suite</b> · Nmap · Metasploit</li>
+          <li><b>Wireshark</b> · Responder · Mimikatz</li>
+          <li><b>BloodHound</b> · SIEM (Elastic basics)</li>
+          <li><b>Kali Linux</b> · Windows Server 2022</li>
+          <li><b>PowerShell</b> · Az CLI</li>
+        </ul>
+      </div>
+      <div class="skill-card reveal">
+        <h3><span class="icon">[03]</span> Cloud & Compliance</h3>
+        <ul>
+          <li><b>Azure / Entra ID</b> — fundamentals + active red team labs</li>
+          <li><b>Service Principals</b> & role misconfigurations</li>
+          <li><b>NIST 800-171</b> gap analysis</li>
+          <li><b>SOC Analysis</b> fundamentals</li>
+          <li><b>Risk Assessment</b> & reporting</li>
+        </ul>
+      </div>
+      <div class="skill-card reveal">
+        <h3><span class="icon">[04]</span> Programming & OS</h3>
+        <ul>
+          <li><b>Python</b> — tooling & automation</li>
+          <li><b>C++</b> · JavaScript</li>
+          <li><b>HTML / CSS</b> · Firebase</li>
+          <li><b>Linux</b> (Kali) · Windows / Server 2022</li>
+          <li><b>Git</b> & GitHub</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <h2 class="section-title reveal">experience</h2>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="role">Security Compliance Trainee</div>
+        <div class="company">TIQHUB · Virginia (Remote)</div>
+        <div class="date">Sep 2024 – Jan 2025</div>
+        <ul>
+          <li>Performed security gap analyses against <b>NIST 800-171</b> and related frameworks, mapping current-state controls to target-state requirements for client organizations.</li>
+          <li>Authored detailed compliance and risk-assessment reports used to guide remediation planning and audit readiness.</li>
+        </ul>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="role">Security Intern</div>
+        <div class="company">Senslearner Technology · Uttarakhand</div>
+        <div class="date">Jun 2023 – Jul 2023</div>
+        <ul>
+          <li>Performed vulnerability assessments and penetration tests across <b>10+ web applications</b>, identifying 9 findings (5 critical, 3 medium, 1 low) including SQL injection and XSS.</li>
+          <li>Executed <b>5+ full penetration testing engagements</b> simulating real-world attacker behavior, documenting exploitation paths and remediation guidance.</li>
+          <li>Partnered with developers in weekly security reviews to translate findings into secure-coding and hardening practices.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="alt">
+  <div class="container">
+    <h2 class="section-title reveal">red_team_projects</h2>
+    <div class="projects-grid">
+
+      <!-- FEATURED: AD LAB -->
+      <div class="project featured reveal">
+        <span class="project-tag red">Featured · Offensive Lab</span>
+        <h3>Active Directory Attack Lab</h3>
+        <p>
+          Enterprise-scale AD lab with a Domain Controller and 2 domain-joined Windows 10 clients,
+          built to safely simulate real intrusion scenarios end-to-end. Executed and documented
+          common AD attack chains, mapped privilege-escalation and lateral-movement paths with
+          BloodHound, then authored mitigation recommendations mirroring real Red Team engagement
+          deliverables.
+        </p>
+        <div class="attack-chain">
+          <span>Kerberoasting</span>
+          <span>LLMNR Poisoning</span>
+          <span>Pass-the-Hash</span>
+          <span>Golden Ticket</span>
+          <span>BloodHound Path Mapping</span>
+        </div>
+        <div class="stack">
+          <span>Windows Server 2022</span>
+          <span>Windows 10</span>
+          <span>Kali Linux</span>
+          <span>VMware</span>
+          <span>BloodHound</span>
+          <span>Mimikatz</span>
+          <span>Responder</span>
+        </div>
+        <a class="link" href="https://github.com/Sudobash-anonymous/Active-directory-lab" target="_blank" rel="noopener">
+          → github.com/Sudobash-anonymous/Active-directory-lab
+        </a>
+      </div>
+
+      <!-- AZURE LAB -->
+      <div class="project reveal">
+        <span class="project-tag cloud wip">In Progress · Cloud Red Team</span>
+        <h3>Azure Cloud Red Team Lab</h3>
+        <p>
+          Hands-on Azure red team lab practicing common cloud attack paths:
+          over-privileged service principals, exposed storage accounts, and Entra ID
+          role/permission misconfigurations. Each attack chain documented with
+          detection and mitigation guidance.
+        </p>
+        <div class="stack">
+          <span>Microsoft Azure</span>
+          <span>Entra ID</span>
+          <span>PowerShell</span>
+          <span>Az CLI</span>
+        </div>
+      </div>
+
+      <!-- STEGANOGRAPHY -->
+      <div class="project reveal">
+        <span class="project-tag">Security Tooling</span>
+        <h3>Steganography Tool</h3>
+        <p>
+          Encrypted data-concealment tool across JPEG/MP3/PNG formats.
+          Improved resistance to steganalysis detection by <b>20%</b>.
+        </p>
+        <div class="stack">
+          <span>Python</span>
+          <span>Java</span>
+          <span>Cryptography</span>
+        </div>
+      </div>
+
+      <!-- WEB TESTER -->
+      <div class="project reveal">
+        <span class="project-tag">Web Security</span>
+        <h3>Web Tester</h3>
+        <p>
+          Web application testing tool for bug and vulnerability identification —
+          reduced post-launch defects by <b>30%</b>.
+        </p>
+        <div class="stack">
+          <span>HTML</span>
+          <span>CSS</span>
+          <span>JavaScript</span>
+          <span>Firebase</span>
+        </div>
+      </div>
+
+      <!-- CODEGPT -->
+      <div class="project reveal">
+        <span class="project-tag">Full-Stack / AI</span>
+        <h3>CodeGPT</h3>
+        <p>
+          AI-powered code-completion platform with multi-language support —
+          improved development speed by <b>20%</b>.
+        </p>
+        <div class="stack">
+          <span>HTML</span>
+          <span>CSS</span>
+          <span>JavaScript</span>
+          <span>OpenAI API</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WRITEUPS -->
+<section id="writeups">
+  <div class="container">
+    <h2 class="section-title reveal">writeups_&_research</h2>
+    <div class="writeups-grid">
+
+      <a class="writeup reveal" href="https://github.com/Sudobash-anonymous/Active-directory-lab" target="_blank" rel="noopener">
+        <span class="tag red">AD Attack Chain</span>
+        <h4>Kerberoasting to Domain Admin</h4>
+        <p>Full walkthrough of requesting service tickets, cracking them offline, and pivoting to Domain Admin in a lab environment.</p>
+        <div class="meta">→ View on GitHub</div>
+      </a>
+
+      <a class="writeup reveal" href="https://github.com/Sudobash-anonymous/Active-directory-lab" target="_blank" rel="noopener">
+        <span class="tag red">Post-Exploitation</span>
+        <h4>Pass-the-Hash & Golden Ticket</h4>
+        <p>Credential reuse and Kerberos ticket forgery — plus detection strategies defenders can deploy.</p>
+        <div class="meta">→ View on GitHub</div>
+      </a>
+
+      <a class="writeup reveal" href="https://github.com/Sudobash-anonymous" target="_blank" rel="noopener">
+        <span class="tag cloud">Cloud · WIP</span>
+        <h4>Azure Service Principal Abuse</h4>
+        <p>Enumerating over-privileged service principals in Entra ID and escalating to subscription-level control.</p>
+        <div class="meta">→ Coming soon on GitHub</div>
+      </a>
+
+      <a class="writeup reveal" href="https://github.com/Sudobash-anonymous" target="_blank" rel="noopener">
+        <span class="tag cloud">Cloud · WIP</span>
+        <h4>Exposed Azure Storage Accounts</h4>
+        <p>Finding publicly accessible blobs, misconfigured SAS tokens, and what real impact looks like.</p>
+        <div class="meta">→ Coming soon on GitHub</div>
+      </a>
+
+      <a class="writeup reveal" href="https://tryhackme.com/p/mdfaizahmad" target="_blank" rel="noopener">
+        <span class="tag">TryHackMe</span>
+        <h4>Top 1% Journey</h4>
+        <p>Notes and methodology from climbing into the global top 1% on TryHackMe.</p>
+        <div class="meta">→ tryhackme.com/p/mdfaizahmad</div>
+      </a>
+
+      <a class="writeup reveal" href="https://github.com/Sudobash-anonymous" target="_blank" rel="noopener">
+        <span class="tag">Tooling</span>
+        <h4>Building a Steganography Tool</h4>
+        <p>Design notes from building an encrypted data-concealment tool with 20% better steganalysis resistance.</p>
+        <div class="meta">→ View on GitHub</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certs" class="alt">
+  <div class="container">
+    <h2 class="section-title reveal">certifications</h2>
+    <div class="certs-grid">
+      <div class="cert reveal"><span class="check">[✓]</span><div><div class="name">Certified AppSec Practitioner (CAP)</div><div class="issuer">Secops Group</div></div></div>
+      <div class="cert reveal"><span class="check">[✓]</span><div><div class="name">Certified Network Security Practitioner (CNSP)</div><div class="issuer">Secops Group</div></div></div>
+      <div class="cert reveal"><span class="check">[✓]</span><div><div class="name">Certified SOC Analyst Foundation</div><div class="issuer">SIEM-XPERT</div></div></div>
+      <div class="cert reveal"><span class="check">[✓]</span><div><div class="name">Certified Ethical Hacking Essential</div><div class="issuer">CodeRed</div></div></div>
+      <div class="cert reveal"><span class="check">[✓]</span><div><div class="name">IBM Cybersecurity Analyst</div><div class="issuer">Coursera</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="container">
+    <h2 class="section-title reveal">achievements</h2>
+    <div class="ach-grid">
+      <div class="ach reveal">
+        <div class="big">Top 1%</div>
+        <h4>TryHackMe Global Ranking</h4>
+        <p>Consistently ranked in the top 1% of users worldwide.</p>
+        <a href="https://tryhackme.com/p/mdfaizahmad" target="_blank" rel="noopener">→ tryhackme.com/p/mdfaizahmad</a>
+      </div>
+      <div class="ach reveal">
+        <div class="big">2024</div>
+        <h4>Great AppSec Hackathon</h4>
+        <p>Developed a security-focused solution identifying and mitigating web application vulnerabilities.</p>
+      </div>
+      <div class="ach reveal">
+        <div class="big">400+</div>
+        <h4>QUANSIC — YouTube Channel</h4>
+        <p>Founded and manage a cybersecurity channel covering secure coding and penetration testing tutorials.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- YOUTUBE / QUANSIC -->
+<section id="youtube" class="alt">
+  <div class="container">
+    <h2 class="section-title reveal">quansic_youtube</h2>
+    <div class="yt-banner reveal">
+      <div>
+        <h3>🎥 <span class="red">QUANSIC</span> — Cybersecurity, simplified.</h3>
+        <p>I run a YouTube channel breaking down secure coding, penetration testing, and red team concepts — for beginners and practitioners alike.</p>
+        <p>400+ subscribers and growing.</p>
+        <div class="yt-stats">
+          <div><b>400+</b>Subscribers</div>
+          <div><b>Security</b>Content Focus</div>
+          <div><b>Weekly</b>Uploads</div>
+        </div>
+      </div>
+      <div>
+        <a href="https://www.youtube.com/@quansic" target="_blank" rel="noopener" class="btn" style="background:#ff0000; color:#fff;">▶ Visit Channel</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <h2 class="section-title reveal">education</h2>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="role">B.E./B.Tech — Computer Science and Engineering</div>
+        <div class="company">Chandigarh University · Punjab</div>
+        <div class="date">2020 – 2024 · CGPA: 7.1</div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="role">Intermediate (PCM)</div>
+        <div class="company">Sri Chaitanya Jr College · Hyderabad</div>
+        <div class="date">2017 – 2019 · 87%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLICATION -->
+<section id="publication" class="alt">
+  <div class="container">
+    <h2 class="section-title reveal">publication</h2>
+    <div class="project reveal">
+      <span class="project-tag">IJNRD · April 2024</span>
+      <h3>"Entertainment App using React JS"</h3>
+      <p>
+        Published research paper on a media streaming application focused on
+        front-end performance and UX.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-box reveal">
+      <h2>Let's simulate <span class="grad">real attacks</span>.</h2>
+      <p>Open to Security Intern roles focused on Active Directory and Cloud Red Teaming.</p>
+      <div class="contact-links">
+        <a href="mailto:mdfaiizahmad678@gmail.com" class="btn">Email Me</a>
+        <a href="https://github.com/Sudobash-anonymous" class="btn ghost" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/md-faiz-ahmad-6a7ab01bb/" class="btn ghost" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="Md_Faiz_Ahmad_Red_teaming_Resume.pdf" class="btn ghost" download>⬇ Resume</a>
+      </div>
+      <div class="contact-info">
+        <span>📧 <a href="mailto:mdfaiizahmad678@gmail.com">mdfaiizahmad678@gmail.com</a></span>
+        <span>📱 +91-6203654830</span>
+        <span>📍 Ranchi, Jharkhand</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    © 2025 Md Faiz Ahmad · Built with <span class="green">curiosity</span>, secured by <span class="green">default</span>.
+  </div>
+</footer>
+
+<script>
+  // ===== THEME TOGGLE =====
+  const themeToggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    html.setAttribute('data-theme', saved);
+    themeToggle.textContent = saved === 'light' ? '☀️' : '🌙';
+  }
+  themeToggle.addEventListener('click', () => {
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    themeToggle.textContent = next === 'light' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  });
+
+  // ===== SCROLL REVEAL =====
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+</script>
+
+</body>
+</html>
